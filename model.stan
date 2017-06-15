@@ -60,30 +60,41 @@ real likek(vector TDX, real beta, real gamma, real k){
     real gamma;
     real k;
 
-    to     <- TDX[1];
+    to <- TDX[1];
     dO <- TDX[2];
     x <- TDX[3];
 
     return
-    REWRITE IN ~R LANG
-    ifelse(k<=to,((haz^-risk)^(k-1))*(1-haz^-risk)*Delta(k,to,dO),0);
+    if(k<=to) {
+      (((1+exp(gamma))^-(exp(x*beta)))^(k-1))*(1-(1+exp(gamma))^-(exp(x*beta)))*Delta(k,to,dO)
+     } else {
+      0
+     };
 
     }
 }
 
 data {
 
- 
+  int<lower=0> N;
+  vector[2] TDX[N];
 
 }
 parameters {
 
-
-
+  real<lower=0> gamma;
+  real<lower=0> beta;
 
 }
 model {
-
   
+  for(i in 1:N){
+    
+    TDX[i] ~ like(beta, gamma);
+    
+  }
+  
+  beta ~ normal(0,1);
+  theta ~ normal(0,1);
 
 }
