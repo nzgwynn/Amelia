@@ -79,19 +79,20 @@ real like(vector TDX, real beta, real gamma, real phi, real theta){
     real to;
     real dO;
     real x;
-    real S;
+    vector [6] S;
     
     to = TDX[1];
     dO = TDX[2];
     x = TDX[3];
 
-    S = like0(TDX, beta, gamma, phi);
+    S[1] = like0(TDX, beta, gamma, phi);
     
-    //for(int i = 5; i >= 1; --i){
-      //S += likek(TDX, i, beta, gamma, phi, theta);
-    //}
+    for (j  in 1:5)
+    {
+      S[j+1]= likek(TDX, j, beta, gamma, phi, theta);
+    }
     
-    return S;
+    return sum(S);
     }
 }
 
