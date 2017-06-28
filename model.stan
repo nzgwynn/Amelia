@@ -7,9 +7,9 @@ functions {
 # Have to declare the functions before I can use them
 
 
-real Gamma(vector TDX, real phi);
+real Gamma(real to, real dO, real phi);
 
-real Delta(real ti,  vector TDX, real phi, real theta);
+real Delta(real ti,  real to, real dO, real phi, real theta);
 
 real like(vector TDX, real beta, real gamma, real phi, real theta);
 
@@ -20,23 +20,11 @@ real likek(vector TDX, real k, real beta, real gamma, real phi, real theta);
 ##################
 ## Definitions 
 ##################
-real Delta(real ti, vector TDX, real phi, real theta){
-    real to;
-    real dO;
-    
-    to = TDX[1];
-    dO = TDX[2];
-  
+real Delta(real ti, real to, real dO, real phi, real theta){
     return phi^(ti-1)*(1-theta)^(to-ti)*(1-theta)^(1-dO)*theta^dO;
     }
 
-real Gamma(vector TDX, real phi){
-    real to;
-    real dO;
- 
-    to = TDX[1];
-    dO = TDX[2];
-  
+real Gamma(real to, real dO, real phi){
     return phi^(to-1)*phi^(1-dO)*(1-phi)^dO;
     }
 
@@ -49,7 +37,7 @@ real like0(vector TDX, real beta, real gamma, real phi){
     dO = TDX[2];
     x = TDX[3];
 
-    return (1+exp(gamma))^(-exp(x*beta))*Gamma(TDX, phi);
+    return (1+exp(gamma))^(-exp(x*beta))*Gamma(to, dO, phi);
     }
     
 real likek(vector TDX, real k, real beta, real gamma, real phi, real theta){
@@ -67,7 +55,7 @@ real likek(vector TDX, real k, real beta, real gamma, real phi, real theta){
     {
       risk = exp(x*beta);
       haz = 1+exp(gamma);
-      return pow(pow(haz, -risk), k-1) * (1-pow(haz, -risk)) * Delta(k, TDX, phi, theta);
+      return pow(pow(haz, -risk), k-1) * (1-pow(haz, -risk)) * Delta(k, to, dO, phi, theta);
      } 
      else 
      {
@@ -119,7 +107,7 @@ model {
     
   }
   
-  beta ~ normal(0,1);
-  gamma ~ normal(0,1);
+  beta ~ normal(0,10);
+  gamma ~ normal(0,10);
 
 }

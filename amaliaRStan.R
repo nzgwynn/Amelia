@@ -1,3 +1,7 @@
+## Extraneous functions used to not put bounds on lambda
+
+logit<-function(lambda) log(lambda/(1-lambda))
+expit<-function(gamma) exp(gamma)/(1+exp(gamma))
 
 ## Function used to make data here
 
