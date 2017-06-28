@@ -7,20 +7,40 @@ functions {
 # Have to declare the functions before I can use them
 
 
-real Gamma(real to,  real dO);
+real Gamma(vector TDX, real phi);
 
-real Delta(real ti,  real to, real dO);
+real Delta(real ti,  vector TDX, real phi, real theta);
 
-real like(real to,  real dO, real x, real beta, real gamma);
+real like(vector TDX, real beta, real gamma, real phi, real theta);
 
-real like0(real to,  real dO, real x, real beta, real gamma);
+real like0(vector TDX, real beta, real gamma, real phi);
 
-real likek(real to,  real dO, real x, real beta, real gamma, real k);
+real likek(vector TDX, real k, real beta, real gamma, real phi, real theta);
 
 ##################
 ## Definitions 
 ##################
-real like0(vector TDX, real beta, real gamma){
+real Delta(real ti, vector TDX, real phi, real theta){
+    real to;
+    real dO;
+    
+    to = TDX[1];
+    dO = TDX[2];
+  
+    return phi^(ti-1)*(1-theta)^(to-ti)*(1-theta)^(1-dO)*theta^dO;
+    }
+
+real Gamma(vector TDX, real phi){
+    real to;
+    real dO;
+ 
+    to = TDX[1];
+    dO = TDX[2];
+  
+    return phi^(to-1)*phi^(1-dO)*(1-phi)^dO;
+    }
+
+real like0(vector TDX, real beta, real gamma, real phi){
     real to;
     real dO;
     real x;
@@ -29,40 +49,49 @@ real like0(vector TDX, real beta, real gamma){
     dO = TDX[2];
     x = TDX[3];
 
-    return (1+exp(gamma))^(-exp(x*beta))*Gamma(to, dO);
+    return (1+exp(gamma))^(-exp(x*beta))*Gamma(TDX, phi);
     }
     
-real likek(vector TDX, real beta, real gamma, real k){
+real likek(vector TDX, real k, real beta, real gamma, real phi, real theta){
     real to;
     real dO;
     real x;
+    real risk;
+    real haz;
 
     to = TDX[1];
     dO = TDX[2];
     x = TDX[3];
 
-    return
-    if(k<=to){
-      (((1+exp(gamma))^-(exp(x*beta)))^(k-1))*(1-(1+exp(gamma))^-(exp(x*beta)))*Delta(k,to,dO)
-     } else {
-      0
-     };
+    if (k <= to) 
+    {
+      risk = exp(x*beta);
+      haz = 1+exp(gamma);
+      return pow(pow(haz, -risk), k-1) * (1-pow(haz, -risk)) * Delta(k, TDX, phi, theta);
+     } 
+     else 
+     {
+      return 0;
+     }
+}
 
-    }
-
-real like(vector TDX, real beta, real gamma){
+real like(vector TDX, real beta, real gamma, real phi, real theta){
     real to;
     real dO;
     real x;
-
+    real S;
+    
     to = TDX[1];
     dO = TDX[2];
     x = TDX[3];
 
-    return like0(to,dO,x,beta,gamma) + likek(to,dO,x,beta,gamma,k=1) +
-		likek(to,dO,x,beta,gamma,k=2) + likek(to,dO,x,beta,gamma,k=3) + 
-		likek(to,dO,x,beta,gamma,k=4) + likek(to,dO,x,beta,gamma,k=5);
-
+    S = like0(TDX, beta, gamma, phi);
+    
+    //for(int i = 5; i >= 1; --i){
+      //S += likek(TDX, i, beta, gamma, phi, theta);
+    //}
+    
+    return S;
     }
 }
 
@@ -85,11 +114,11 @@ model {
   
   for(i in 1:N){
     
-    TDX[i] ~ like(beta, gamma);
+    TDX[i] ~ like(beta, gamma, 0.9, 0.8);
     
   }
   
   beta ~ normal(0,1);
-  theta ~ normal(0,1);
+  gamma ~ normal(0,1);
 
 }
