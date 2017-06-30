@@ -26,7 +26,6 @@ make.data<-function(halfn, beta, gamma, phi, theta){
 }
 
 ## Inputs for function above to make data
-
 theta<-0.8;phi<-0.9
 
 ## one run

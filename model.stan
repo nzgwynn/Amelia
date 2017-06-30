@@ -94,8 +94,8 @@ data {
 
 parameters {
 
-  real<lower=0> gamma;
-  real<lower=0> beta;
+  real<lower=-20,upper=20> gamma;
+  real<lower=-20,upper=20> beta;
 
 }
 
