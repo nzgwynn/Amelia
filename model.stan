@@ -11,7 +11,7 @@ real Gamma(real to, real dO, real phi);
 
 real Delta(real ti,  real to, real dO, real phi, real theta);
 
-real like(vector TDX, real beta, real gamma, real phi, real theta);
+real like_lpdf(vector TDX, real beta, real gamma, real phi, real theta);
 
 real like0(vector TDX, real beta, real gamma, real phi);
 
@@ -63,7 +63,7 @@ real likek(vector TDX, real k, real beta, real gamma, real phi, real theta){
      }
 }
 
-real like(vector TDX, real beta, real gamma, real phi, real theta){
+real like_lpdf(vector TDX, real beta, real gamma, real phi, real theta){
     real to;
     real dO;
     real x;
@@ -88,7 +88,7 @@ real like(vector TDX, real beta, real gamma, real phi, real theta){
 data {
 
   int<lower=0> N;
-  vector[2] TDX[N];
+  vector[3] TDX[N];
 
 }
 
@@ -103,7 +103,7 @@ model {
   
   for(i in 1:N){
     
-    TDX[i] ~ like(beta, gamma, 0.9, 0.8);
+    TDX[i] ~ like_lpdf(beta, gamma, 0.9, 0.8);
     
   }
   
