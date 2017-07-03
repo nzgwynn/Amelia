@@ -67,35 +67,35 @@ real like_lpdf(vector TDX, real beta, real gamma, real phi, real theta){
     real to;
     real dO;
     real x;
-    vector [6] S;
+    vector [6] S; // Upate this here too!
     
     to = TDX[1];
     dO = TDX[2];
     x = TDX[3];
 
-    S[1] = like0(TDX, beta, gamma, phi);
+    S[1] = like0(TDX, beta, gamma, phi); //TL tried to do log(...)
     
-    for (j  in 1:5)
+    for (j  in 1:5) //TL not sure if this is correct, just one TDX at at time.
     {
-      S[j+1]= likek(TDX, j, beta, gamma, phi, theta);
+      S[j+1]= likek(TDX, j, beta, gamma, phi, theta); //TL tried to do log(...) didn't like it at all.
     }
     
-    return sum(S);
+    return sum(S); //TL this keeps giving me log(0) and gets fussy.
     }
 }
 
 
 data {
 
-  int<lower=0> N;
+  int N; // TL tried sample size 1000 in trt & ctl still no
   vector[3] TDX[N];
 
 }
 
 parameters {
 
-  real<lower=-20,upper=20> gamma;
-  real<lower=-20,upper=20> beta;
+  real gamma;
+  real beta;
 
 }
 
@@ -107,7 +107,7 @@ model {
     
   }
   
-  beta ~ normal(0,10);
-  gamma ~ normal(0,10);
+  beta ~ normal(1.3, 100);
+  gamma ~ normal(-2.9, 100);
 
 }

@@ -64,8 +64,8 @@ makeSurvData <- function(data, times, rule, nreps, trt, true){
   x = rep(trt, nreps)
 
   ## For adjusted Parameters with std.error smaller and 2 times use this
-  times.length = length(times)
-  ##times.length = length(times[[1]])
+  ##times.length = length(times) also need to change T below.
+  times.length = length(times[[1]])
   if(true == 0){BP = data[1:times.length,]
                 Diag = suppressWarnings(apply(BP, 2, rule))
               }else{
@@ -80,12 +80,12 @@ makeSurvData <- function(data, times, rule, nreps, trt, true){
   a = ifelse(times.length == 8, 2, ifelse(times.length == 16, 4, 1))
 
   ## Changing measurement times as a portion of a year (.25, .5, .75, ...) to an integer (1, 2, 3, ...) 
-  ##T = c(rep(max(a*times[[1]]), lengths[max(times.length)+ 1] + 1),  rep(a*times[[1]], lengths[1:times.length]))
+  T = c(rep(max(a*times[[1]]), lengths[max(times.length)+ 1]),  rep(a*times[[1]], lengths[1:times.length]))
   
   ## For adjusted Parameters with std.error smaller and 2 times
-  T = c(rep(max(a*times), lengths[times.length+1]),  rep(a*times, lengths[1:times.length])) 
+  ## T = c(rep(max(a*times), lengths[times.length+1]),  rep(a*times, lengths[1:times.length])) 
 
- as.matrix(to=T, do=D, x=x)
+ matrix(c(to=T, do=D, x=x), ncol = 3)
 }
 
 make.data <- function(P){
@@ -123,6 +123,7 @@ i = round(runif(1,1,4500),0)
 data = list(
   TDX = as.array(make.data(P = par[i,])),
   N = 800)
+
 
 
 library(rstan)

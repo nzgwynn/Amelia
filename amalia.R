@@ -1,4 +1,4 @@
-
+3
 ##
 ##  Assumes no missing data (other than due to diagnosis)
 ## Fixes number of time points at 5, uses same lambda for each time
@@ -11,10 +11,9 @@ Delta<-function(ti, to,do) phi^(ti-1)*(1-theta)^(to-ti)*(1-theta)^(1-do)*theta^d
 
 ## the full likelihood which combines subsequent functions below
 like<-function(to,do,x,beta,gamma){
-	like0(to,do,x,beta,gamma)+likek(to,do,x,beta,gamma,k=1)+
-		likek(to,do,x,beta,gamma,k=2)+likek(to,do,x,beta,gamma,k=3)+
-		likek(to,do,x,beta,gamma,k=4)+likek(to,do,x,beta,gamma,k=5)
-	
+  like0(to,do,x,beta,gamma)+likek(to,do,x,beta,gamma,k=1)+
+    likek(to,do,x,beta,gamma,k=2)+likek(to,do,x,beta,gamma,k=3)+
+    likek(to,do,x,beta,gamma,k=4)+likek(to,do,x,beta,gamma,k=5)
 }
 
 ## The first product from equation 4 in Amalia's paper
