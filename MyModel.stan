@@ -61,7 +61,7 @@ real like0(real beta, vector gamma, vector phi, int TDX){
     }
     
 // THE SECOND PART OF THE LIKELIHOOD ###########################################
-real like.part2(real beta, vector gamma, vector phi, vector theta, int TDX[3]){
+real like.part2(real beta, vector gamma, vector phi, vector theta, int TDX){
   int to;
   int dO;
   int x;
@@ -109,7 +109,7 @@ real one.like.part2(real beta, vector gamma, int ti, int to, int dO, int x, vect
 }
 
 
-real like_lpdf(real beta, vector gamma, vector phi, vector theta, int TDX[3]){
+real like_lpdf(real beta, vector gamma, vector phi, vector theta, int TDX){
     int to;
     int dO;
     int x;

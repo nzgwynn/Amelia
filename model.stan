@@ -109,7 +109,7 @@ model {
     
   }
   
-  beta ~ normal(1.3, 100);
-  gamma ~ normal(-2.9, 100);
+  beta ~ normal(1.3, 10);
+  gamma ~ normal(-2.9, 10);
 
 }

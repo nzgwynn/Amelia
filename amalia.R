@@ -110,3 +110,9 @@ aph.bias<-replicate(100,coef(
 
 apply(aph.bias,1:2.,mean) ## Nowhere near 1.3 logit(0.05)
 apply(aph.bias,1:2.,sd)
+
+## Coding to play with data that I made and am running through Stan. 
+## Changing data to data.frame and not matrix makes this work!! Yippeee!!
+the.minusloglike<-makedev(as.data.frame(Adata[[1]]))
+
+optim(c(1.3,logit(0.05)), the.minusloglike,method="BFGS")

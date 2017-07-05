@@ -136,7 +136,7 @@ myinits_f <- function(chainnum){
   return(list(beta = 1, gamma = 1))
 }
 
-fit <- stan(file = "MyModel.stan",
+fit <- stan(file = "MyBrokenModel.stan",
             data = data, init = myinits_f,
             iter = 1000, chains = 4)
 
