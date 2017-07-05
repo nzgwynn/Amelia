@@ -7,49 +7,45 @@ functions {
 # Have to declare the functions before I can use them
 
 
-real Gamma(real to, real dO, vector phi);
+real Gamma(vector phi, int to, int dO);
 
-real Delta(int ti,  real to, real dO, vector phi, vector theta);
+real Delta(vector phi, vector theta, int ti,  int to, int dO);
 
-real like_lpdf(vector TDX, real beta, vector gamma, vector phi, vector theta);
+real like_lpdf(real beta, vector gamma, vector phi, vector theta, int TDX);
 
-real like0(vector TDX, real beta, vector gamma, vector phi);
+real like0(real beta, vector gamma, vector phi, int TDX);
 
-real like.part2(vector TDX, real beta, vector gamma, vector phi, vector theta);
+real like.part2(real beta, vector gamma, vector phi, vector theta, int TDX);
 
-real one.like.part2(int ti, real to, real dO, real x, real beta, vector gamma, vector phi, vector theta);
+real one.like.part2(real beta, vector gamma, int ti, int to, int dO, int x, vector phi, vector theta);
 
 
 
 ##################
 ## Definitions 
 ##################
-real Delta(int ti, real to, real dO, vector phi, vector theta){
+real  Delta(vector phi, vector theta, int ti,  int to, int dO){
   real T;
   real P1;
-  int i;
   
   P1 = 1;
-  i = ti;
    
-  while(ti <= i <= (to-1)){
+  for(i in ti:(to-1)){
     P1 = P1*(1-theta[i]);
-    i = i+1;
     }
   
-  return prod(phi[1:(ti-1)])*P1*(1-theta[static_cast<int>(to)])^(1-dO)*theta[static_cast<int>(to)]^dO;
+  return prod(phi[1:(ti-1)])*P1*(1-theta[to])^(1-dO)*theta[to]^dO;
     }
 
-real Gamma(real to, real dO, vector phi){
+real Gamma(vector phi, int to, int dO){
     return prod(phi[1:(to-1)])*phi[to]^(1-dO)*(1-phi[to])^dO;
     }
 
-real like0(vector TDX, real beta, vector gamma, vector phi){
-    real to;
-    real dO;
-    real x;
+real like0(real beta, vector gamma, vector phi, int TDX){
+    int to;
+    int dO;
+    int x;
     real P;
-    int i;
 
     to = TDX[1];
     dO = TDX[2];
@@ -57,102 +53,91 @@ real like0(vector TDX, real beta, vector gamma, vector phi){
     P = 1;
     i = 1;
     
-    while(i <= to){
+    for(i in 1:to){
      P = P * (1 + exp(gamma[i]))^(-exp(x*beta));
-     i = i + 1;
     }
 
-    return P*Gamma(to, dO, phi);
+    return P*Gamma(phi, to, dO);
     }
     
 // THE SECOND PART OF THE LIKELIHOOD ###########################################
-real like.part2(vector TDX, real beta, vector gamma, vector phi, vector theta){
-  real to;
-  real dO;
-  real x;
-  real k;
-  vector [16] klike; // number of measurement times
+real like.part2(real beta, vector gamma, vector phi, vector theta, int TDX[3]){
+  int to;
+  int dO;
+  int x;
+  int k;
+  vector [4] klike; // number of measurement times
   
   to = TDX[1];
   dO = TDX[2];
   x = TDX[3];
-  k = 1;
   
-    while (k <= to){
-      klike[k] = one.like.part2(k, to, dO, x, beta, gamma, phi, theta);
-      k = k + 1;
-    }
-  }
+    for(k in 1:to)
+      klike[k] = one.like.part2(beta, gamma, k, to, dO, x, phi, theta);
+      
   return sum(klike);
 }
 
 // USED FOR EACH k IN 1:to #####################################################
-real one.like.part2(int ti, real to, real dO, real x, real beta, vector gamma, vector phi, vector theta){
-  real to;
-  real dO;
-  real x;
+real one.like.part2(real beta, vector gamma, int ti, int to, int dO, int x, vector phi, vector theta){
+  int to;
+  int dO;
+  int x;
   real P2;
   real i;
-  vector [to] P;
+  vector[to] P;
   
   
   to = TDX[1];
   dO = TDX[2];
   x = TDX[3];
   P = 1;
-  i = 1;
     
-    while(i <= to){
+    for(i in 1:to)
       P = P * (1 + exp(gamma[i]))^(-exp(x*beta))
-      i = i + 1
-    }
      
-  P2 = 1 - P[ti];
+  P2 = 1 - (1 + exp(gamma[ti]))^(-exp(x*beta));
 
   if(ti != 1) 
   {
-    return prod(P[1:(ti - 1)]) * (P2) * Delta(ti = ti, 
-           to = to, dO = dO, phi = phi, theta = theta);
+    return prod(P[1:(ti - 1)]) * (P2) * Delta(phi, theta, ti, to, dO);
   }
   else
   {
-    return (P2) * Delta(ti = ti, to = to, dO = dO, phi = phi, theta = theta));
+    return (P2) * Delta(phi, theta, ti, to, dO));
   }
 }
 
 
-real like_lpdf(vector TDX, real beta, vector gamma, vector phi, vector theta){
-    real to;
-    real dO;
-    real x;
+real like_lpdf(real beta, vector gamma, vector phi, vector theta, int TDX[3]){
+    int to;
+    int dO;
+    int x;
     vector [6] S;
     
     to = TDX[1];
     dO = TDX[2];
     x = TDX[3];
 
-    S[1] = like0(TDX, beta, gamma, phi);
+    S[1] = like0(beta, gamma, phi, TDX);
     
     for (j  in 1:5)
-    {
       S[j+1]= likek(TDX, j, beta, gamma, phi, theta);
-    }
     
     return sum(S);
-    }
 }
 
 
 data {
 
   int<lower=0> N;
-  vector[2] TDX[N];
+  int TDX[3];
 
 }
 
 parameters {
 
-  vector [16] <lower=-20,upper=20> gamma;
+  vector [4] <lower=-20,upper=20> gamma;
   real<lower=-20,upper=20> beta;
 
 }

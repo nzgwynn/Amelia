@@ -32,6 +32,8 @@ real like0(vector TDX, real beta, real gamma, real phi){
     real to;
     real dO;
     real x;
+    real risk;
+    real haz;
 
     to = TDX[1];
     dO = TDX[2];
