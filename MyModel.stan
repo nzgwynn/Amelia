@@ -41,7 +41,7 @@ real Gamma(vector phi, int to, int dO){
     return prod(phi[1:(to-1)])*phi[to]^(1-dO)*(1-phi[to])^dO;
     }
 
-real like0(real beta, vector gamma, vector phi, int TDX){
+real like0(real beta, vector gamma, vector phi, int TDX[ ]){
     int to;
     int dO;
     int x;
@@ -61,7 +61,7 @@ real like0(real beta, vector gamma, vector phi, int TDX){
     }
     
 // THE SECOND PART OF THE LIKELIHOOD ###########################################
-real like.part2(real beta, vector gamma, vector phi, vector theta, int TDX){
+real like.part2(real beta, vector gamma, vector phi, vector theta, int TDX[ ]){
   int to;
   int dO;
   int x;
@@ -109,7 +109,7 @@ real one.like.part2(real beta, vector gamma, int ti, int to, int dO, int x, vect
 }
 
 
-real like_lpdf(real beta, vector gamma, vector phi, vector theta, int TDX){
+real like_lpdf(real beta, vector gamma, vector phi, vector theta, int TDX[ ]){
     int to;
     int dO;
     int x;

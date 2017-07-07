@@ -48,7 +48,7 @@ myinits_Af <- function(chainnum){
 
 Afit <- stan(file = "model.stan",
              data = Adata, init = myinits_Af,
-             iter = 2000, chains = 4, control = list(max_treedepth = 15))
+             iter = 1000, chains = 1, control = list(max_treedepth = 15))
 
 traceplot(Afit, warmup = "FALSE")
 pairs(Afit)

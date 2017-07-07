@@ -1,21 +1,5 @@
 functions {
 
-##################
-## Declarations 
-##################
-
-# Have to declare the functions before I can use them
-
-
-real Gamma(real to, real dO, real phi);
-
-real Delta(real ti,  real to, real dO, real phi, real theta);
-
-real like_lpdf(vector TDX, real beta, real gamma, real phi, real theta);
-
-real like0(vector TDX, real beta, real gamma, real phi);
-
-real likek(vector TDX, real k, real beta, real gamma, real phi, real theta);
 
 ##################
 ## Definitions 
@@ -28,7 +12,7 @@ real Gamma(real to, real dO, real phi){
     return phi^(to-1)*phi^(1-dO)*(1-phi)^dO;
     }
 
-real like0(vector TDX, real beta, real gamma, real phi){
+real like0(int TDX, real beta, real gamma, real phi){
     real to;
     real dO;
     real x;
@@ -42,7 +26,7 @@ real like0(vector TDX, real beta, real gamma, real phi){
     return (1+exp(gamma))^(-exp(x*beta))*Gamma(to, dO, phi);
     }
     
-real likek(vector TDX, real k, real beta, real gamma, real phi, real theta){
+real likek(int TDX, real k, real beta, real gamma, real phi, real theta){
     real to;
     real dO;
     real x;
@@ -65,7 +49,7 @@ real likek(vector TDX, real k, real beta, real gamma, real phi, real theta){
      }
 }
 
-real like_lpdf(vector TDX, real beta, real gamma, real phi, real theta){
+real like_lpmf(int TDX, real beta, real gamma, real phi, real theta){
     real to;
     real dO;
     real x;
@@ -82,7 +66,7 @@ real like_lpdf(vector TDX, real beta, real gamma, real phi, real theta){
       S[j+1]= likek(TDX, j, beta, gamma, phi, theta); //TL tried to do log(...) didn't like it at all.
     }
     
-    return sum(S); //TL this keeps giving me log(0) and gets fussy.
+    return sum(log(S)); //TL this keeps giving me log(0) and gets fussy.
     }
 }
 
@@ -90,7 +74,7 @@ real like_lpdf(vector TDX, real beta, real gamma, real phi, real theta){
 data {
 
   int N; // TL tried sample size 1000 in trt & ctl still no
-  vector[3] TDX[N];
+  int TDX[];
 
 }
 
@@ -105,7 +89,7 @@ model {
   
   for(i in 1:N){
     
-    TDX[i] ~ like_lpdf(beta, gamma, 0.9, 0.8);
+    TDX[i] ~ like(beta, gamma, 0.9, 0.8);
     
   }
   
